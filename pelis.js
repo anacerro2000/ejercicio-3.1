@@ -49,36 +49,39 @@ const updateAPI = async (peliculas) => {
   }
 }
 
-// VISTAS
-const indexView = (peliculas) => {
-    let i=0;
-    let view = "";
+        // VISTAS
+        const indexView = (peliculas) => {
+            let i=0;
+            let view = "";
+            if(!peliculas.length) { 
+                view += "<div>Sin resultados</div>";
+            } else {
+                while(i < peliculas.length) {
+                    view += `
+                        <div class="movie">
+                            <div class="movie-img">
+                                <img data-my-id="${i}" src="${peliculas[i].miniatura}" onerror="this.src='files/placeholder.png'"/>
+                            </div>
+                            <div class="title">
+                                ${peliculas[i].titulo || "<em>Sin título</em>"}
+                            </div>
+                            <div class="actions">
+                                <button class="show" data-my-id="${i}">ver</button>
+                                <button class="edit" data-my-id="${i}">editar</button>
+                                <button class="delete" data-my-id="${i}"">borrar</button>
+                            </div>
+                        </div>\n`;
+                    i = i + 1;
+                }
+            }
 
-    while(i < peliculas.length) {
-      view += `
-        <div class="movie">
-           <div class="movie-img">
-                <img data-my-id="${i}" src="${peliculas[i].miniatura}" onerror="this.src='files/placeholder.png'"/>
-           </div>
-           <div class="title">
-               ${peliculas[i].titulo || "<em>Sin título</em>"}
-           </div>
-           <div class="actions">
-                <!--Insertar aquí botones de "Show" y "Delete"-->
-               <button class="edit" data-my-id="${i}">editar</button>
-            </div>
-        </div>\n`;
-      i = i + 1;
-    };
+            view += `<div class="actions">
+                        <button class="new"> Añadir</button>
+                        <button class="reset">Reset</button>
+                        </div>`;
 
-    view += `<div class="actions">
-                <!--Insertar aquí botones de "Añadir" y "Reset"-->
-                <button class="new" id="new" data-my-id="${i}">add movie</button>
-                <button class="reset" id ="reset" data-my-id="${i}">reset all</button>
-            </div>`;
-
-    return view;
-};
+            return view;
+        };
 
 const editView = (i, pelicula) => {
     return `<h2>Editar Película </h2>
@@ -103,56 +106,28 @@ const editView = (i, pelicula) => {
             </button>
             <button class="index">
                 Volver
-            </button>
-       `;
+        </button>`;
 }
 
 const showView = (pelicula) => {
-    // Completar: genera HTML con información de la película
-    // ...
-
-    return `<h2>Informacion de la pelicula <\h2>
-    <div class= "field">
-    <h3> Titulo <\h3>
-    <h1> ${pelicula.titulo}</h1>
-    </div>
-    <div class= "field">
-    <h3> Director <\h3>
-    <h1> ${pelicula.director}</h1>
-    </div>
-    <div class="field">
-    <h3>Miniatura</h4>
-    <h1>${pelicula.miniatura}</h1>
-    </div>
-    <div class="actions">
-        <button class="index" id="volver">
-            Volver
-        </button>
-    `;
+    return `
+     <p>
+        La película <b> ${pelicula.titulo} </b> fue 
+        dirigida por <b> ${pelicula.director}</b>!
+     </p>
+     <button class="index">Volver</button>`;
 }
 
-const newView = () => { 
-    // Completar: genera formulario para crear nuevo quiz
-    // ...
-
+const newView = () => {
     return `<h2>Crear Película</h2>
-    <div class="field">
-    Titulo <br>
-    <input type="text" id="titulo" placeholder= "Titulo">
-    <\div>
-    <div class="field">
-    Director <br>
-    <input  type="text" id="director" placeholder="Director">
-    </div>
-    <div class="field">
-    Miniatura <br>
-    <input  type="text" id="miniatura" placeholder="URL de la miniatura">
-    </div>
-    <div class="actions">
-        <button class="create" id ="create">Crear</button>
-        <button class="index" id ="volver">Volver</button>`;
+        <div class="field">Título<br> <input  type="text" id="titulo" placeholder="Título" > </div>
+        <div class="field">Director<br> <input  type="text" id="director" placeholder="Director" > </div>
+        <div class="field">Miniatura<br> <input  type="text" id="miniatura" placeholder="URL de la miniatura" ></div>
+        <div class="actions">
+            <button class="create">Crear</button>
+            <button class="index">Volver</button>
+        </div>`;
 }
-
 
 // CONTROLADORES 
 const indexContr = () => {
