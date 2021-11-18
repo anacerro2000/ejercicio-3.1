@@ -8,7 +8,46 @@ let mis_peliculas_iniciales = [
     {titulo: "Interstellar",  director: "Christopher Nolan", "miniatura": "files/interstellar.png"},
 ];
 
-localStorage.mis_peliculas = localStorage.mis_peliculas || JSON.stringify(mis_peliculas_iniciales);
+let mis_peliculas = [];
+
+const postAPI = async (peliculas) => {
+    try {
+        const res = await fetch("https://api.myjson.com/bins", {
+          method: 'POST', 
+          headers:{
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(peliculas)
+        });
+        const {uri} = await res.json();
+        return uri;               
+    } catch (err) {
+        alert("No se ha podido crear el endpoint.")
+    }
+}
+// Lee la información guardada en myjson a través de la API
+const getAPI = async () => {
+  try {
+    const res = await fetch(localStorage.URL);
+    return res.json();
+  } catch (e) {
+    alert("No se ha podido recuperar la información.")
+  }
+}
+// Actualiza la información a través de la API
+const updateAPI = async (peliculas) => {
+  try {
+    await fetch(localStorage.URL, {
+      method: 'PUT', 
+      headers:{
+              "Content-Type": "application/json",
+          },
+      body: JSON.stringify(peliculas)});
+  } catch(e) {
+    alert("Ha ocurrido un error");
+    return;
+  }
+}
 
 // VISTAS
 const indexView = (peliculas) => {
