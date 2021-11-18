@@ -130,63 +130,58 @@ const newView = () => {
 }
 
 // CONTROLADORES 
-const indexContr = () => {
-    let mis_peliculas = JSON.parse(localStorage.mis_peliculas);
-    document.getElementById('main').innerHTML = indexView(mis_peliculas);
-};
+const initContr = async () => {
+    if (!localStorage.URL) {
+        localStorage.URL = await postAPI(mis_peliculas_iniciales);
+    }
+    await indexContr();
+}
+const indexContr = async () => {
+    mis_peliculas = await getAPI() || [];
+    document.getElementById('main').innerHTML = await indexView(mis_peliculas);
+}
 
 const showContr = (i) => {
-    let mis_peliculas = JSON.parse(localStorage.mis_peliculas);
-    document.getElementById('main').innerHTML = indexView(mis_peliculas);
-};
-
+    document.getElementById('main').innerHTML = showView(mis_peliculas[i]);
+}
 const newContr = () => {
     document.getElementById('main').innerHTML = newView();
-};
 
-const createContr = () => {
-    let mis_peliculas = JSON.parse(localStorage.mis_peliculas);
-    var nueva_pelicula = {
-        titulo : document.getElementById("titulo").value,
-        director : document.getElementById("director").value,
-        miniatura : document.getElementById("miniatura").value};
-    mis_peliculas.push(nueva_pelicula);
-    localStorage.mis_peliculas = JSON.stringify(mis_peliculas);
+}
+const createContr = async () => {
+    let n_titulo   = document.getElementById('titulo').value;
+    let n_director = document.getElementById('director').value;
+    let n_miniatura = document.getElementById('miniatura').value;
+    mis_peliculas.push({titulo: n_titulo, director: n_director, miniatura: n_miniatura});
+    await updateAPI(mis_peliculas);
     indexContr();
-};
+}
 
 const editContr = (i) => {
-    let pelicula = JSON.parse(localStorage.mis_peliculas)[i];
-    document.getElementById('main').innerHTML = editView(i, pelicula);
-};
+    document.getElementById('main').innerHTML = editView(i,  mis_peliculas[i]);
+}
 
-const updateContr = (i) => {
-    let mis_peliculas = JSON.parse(localStorage.mis_peliculas);
-    mis_peliculas[i].titulo    = document.getElementById('titulo').value;
-    mis_peliculas[i].director  = document.getElementById('director').value;
+const updateContr = async (i) => {
+    mis_peliculas[i].titulo   = document.getElementById('titulo').value;
+    mis_peliculas[i].director = document.getElementById('director').value;
     mis_peliculas[i].miniatura = document.getElementById('miniatura').value;
-    localStorage.mis_peliculas = JSON.stringify(mis_peliculas);
-    indexContr();
-};
+    await updateAPI(mis_peliculas);
+    await indexContr();
+}
 
-const deleteContr = (i) => {
-    let mis_peliculas = JSON.parse(localStorage.mis_peliculas);
-    var r = confirm("Seguro que quieres eliminarla?");
-    if (r == true) {
-        mis_peliculas.splice(i,1);
-        localStorage.mis_peliculas = JSON.stringify(mis_peliculas);
-        indexContr();
-    } else {
-        indexContr();
+const deleteContr = async (i) => {
+    if (confirm(`Borrar ${mis_peliculas[i].titulo}`)) {
+        mis_peliculas.splice(i, 1); // elimina elemento i del array
+        await updateAPI(mis_peliculas);
+        await indexContr();
     }
-};
+}
 
-const resetContr = () => {
-    // Completar:  controlador que reinicia el modelo guardado en localStorage con las películas originales
-    
-    localStorage.mis_peliculas = JSON.stringify(mis_peliculas_iniciales);
-    indexContr();
-};
+const resetContr = async () => {
+    mis_peliculas = [...mis_peliculas_iniciales];
+    await updateAPI(mis_peliculas);
+    await indexContr();
+}
 
 // ROUTER de eventos
 const matchEvent = (ev, sel) => ev.target.matches(sel);
